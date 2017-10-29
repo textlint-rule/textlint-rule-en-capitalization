@@ -11,7 +11,7 @@
     "src/"
   ],
   "name": "textlint-rule-en-capitalization",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "textlint rule that check capitalization in english text.",
   "main": "lib/textlint-rule-en-capitalization.js",
   "scripts": {
