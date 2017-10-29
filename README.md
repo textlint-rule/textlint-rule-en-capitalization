@@ -66,7 +66,7 @@ textlint --rule en-capitalization README.md
 
 You can disable check by options.
 
-```json
+```json5
 {
     "rules": {
         "en-capitalization": {
