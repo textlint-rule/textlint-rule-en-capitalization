@@ -1,10 +1,11 @@
-# textlint-rule-en-capitalization
+# textlint-rule-en-capitalization [![Build Status](https://travis-ci.org/textlint-rule/textlint-rule-en-capitalization.svg?branch=master)](https://travis-ci.org/textlint-rule/textlint-rule-en-capitalization)
+
 
 textlint rule that check capitalization in english text.
 
 **OK**:
 
-```
+```markdown
 In text, follow the standard capitalization rules for American English. Additionally:
 First, sentence should be capital. Second, sentence should be capital.
 # Capitalization in titles and headings
@@ -21,13 +22,19 @@ Use a lowercase letter to begin the first word of the text immediately following
 
 **NG**:
 
-```
+```markdown
 in text, follow the standard capitalization rules for American English
 first, sentence should be capital. second, sentence should be capital.
 # capitalization in titles and headings
+
+- a proper noun.
+- a quotation.
+- an item in a bulleted, numbered, or definition list.
+- text that follows a label, such as a Caution or Note.
+- a subheading on the same line as a heading.
+
 ![image](http://exmaple.com) is not capital.
 ```
-
 
 
 ## Install
@@ -79,7 +86,7 @@ Enable all node by default.
 
 ## Changelog
 
-See [Releases page](https://github.com/azu/textlint-rule-en-capitalization/releases).
+See [Releases page](https://github.com/textlint-rule/textlint-rule-en-capitalization/releases).
 
 ## Running tests
 
@@ -91,7 +98,7 @@ Install devDependencies and Run `npm test`:
 
 Pull requests and stars are always welcome.
 
-For bugs and feature requests, [please create an issue](https://github.com/azu/textlint-rule-en-capitalization/issues).
+For bugs and feature requests, [please create an issue](https://github.com/textlint-rule/textlint-rule-en-capitalization/issues).
 
 1. Fork it!
 2. Create your feature branch: `git checkout -b my-new-feature`

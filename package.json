@@ -28,12 +28,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/azu/textlint-rule-en-capitalization.git"
+    "url": "https://github.com/textlint-rule/textlint-rule-en-capitalization.git"
   },
   "bugs": {
-    "url": "https://github.com/azu/textlint-rule-en-capitalization/issues"
+    "url": "https://github.com/textlint-rule/textlint-rule-en-capitalization/issues"
   },
-  "homepage": "https://github.com/azu/textlint-rule-en-capitalization",
+  "homepage": "https://github.com/textlint-rule/textlint-rule-en-capitalization",
   "devDependencies": {
     "babel-register": "^6.26.0",
     "husky": "^0.14.3",
