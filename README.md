@@ -64,17 +64,21 @@ textlint --rule en-capitalization README.md
 
 ## Options
 
-You can disable check for Node.
-Enable all node by default.
+You can disable check by options.
 
 ```json
 {
     "rules": {
         "en-capitalization": {
-           "heading": true,
-           "figures": true,
-           "lists": true
-        }
+             // allow lower-case words in Header
+             "allowHeading": true,
+             // allow lower-case words in Image alt
+             "allowFigures": true,
+             // allow lower-case words in ListItem
+             "allowLists": true,
+             // allow lower-case words in anywhere
+             "allowWords": []
+         }
     }
 }
 ```

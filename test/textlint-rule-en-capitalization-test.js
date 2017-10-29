@@ -20,7 +20,13 @@ tester.run("capitalization", rule, {
         {
             text: "![image](http://exmaple.com) is not capital.",
             options: {
-                figures: false
+                allowFigures: false
+            }
+        },
+        {
+            text: "textlint is allowed.",
+            options: {
+                allowWords: ["textlint"]
             }
         }
     ],

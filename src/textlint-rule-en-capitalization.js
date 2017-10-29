@@ -5,7 +5,14 @@ const StringSource = require("textlint-util-to-string");
 const { split, Syntax: SentenceSyntax } = require("sentence-splitter");
 import { getPosFromSingleWord, isCapitalized, upperFirstCharacter } from "./captalize";
 
-const shouldNotCapitalized = string => {
+const shouldNotCapitalized = (string, allowWords) => {
+    // allow words
+    const shouldAllowed = allowWords.some(allowWord => {
+        return allowWord === string;
+    });
+    if (shouldAllowed) {
+        return true;
+    }
     // A quotation
     if (!/^\w/.test(string)) {
         return true;
@@ -43,9 +50,10 @@ const getNodeAtIndex = (node, index) => {
  * @param report
  * @param RuleError
  * @param fixer
- * @param {boolean} figures enable figures check
+ * @param {boolean} allowFigures enable figures check
+ * @param {string[]} allowWords allow lower-case words
  */
-const checkNode = ({ node, Syntax, getSource, report, RuleError, fixer, figures }) => {
+const checkNode = ({ node, Syntax, getSource, report, RuleError, fixer, allowFigures, allowWords }) => {
     const source = new StringSource(node);
     const sourceText = source.toString();
     const sentences = split(sourceText);
@@ -65,7 +73,7 @@ const checkNode = ({ node, Syntax, getSource, report, RuleError, fixer, figures 
         if (targetNode.type === Syntax.Str) {
             const text = sentence.value;
             const firstWord = text.split(" ")[0];
-            if (isCapitalized(firstWord) || shouldNotCapitalized(firstWord)) {
+            if (isCapitalized(firstWord) || shouldNotCapitalized(firstWord, allowWords)) {
                 return;
             }
             const index = originalIndex;
@@ -80,9 +88,9 @@ See ${DocumentURL}`,
                     }
                 )
             );
-        } else if (figures && targetNode.type === Syntax.Image && typeof targetNode.alt === "string") {
+        } else if (allowFigures && targetNode.type === Syntax.Image && typeof targetNode.alt === "string") {
             const text = targetNode.alt;
-            if (isCapitalized(text) || shouldNotCapitalized(text)) {
+            if (isCapitalized(text) || shouldNotCapitalized(text, allowWords)) {
                 return;
             }
             return report(
@@ -97,23 +105,29 @@ See ${DocumentURL}`
 };
 
 const DefaultOptions = {
-    heading: true,
-    figures: true,
-    lists: true
+    // allow lower-case words in Header
+    allowHeading: true,
+    // allow lower-case words in Image alt
+    allowFigures: true,
+    // allow lower-case words in ListItem
+    allowLists: true,
+    // allow lower-case words in anywhere
+    allowWords: []
 };
 const report = (context, options = {}) => {
     const { Syntax, RuleError, getSource, fixer, report } = context;
-    const heading = options.heading !== undefined ? options.heading : DefaultOptions.heading;
-    const figures = options.figures !== undefined ? options.figures : DefaultOptions.figures;
-    const lists = options.lists !== undefined ? options.lists : DefaultOptions.lists;
+    const allowHeading = options.allowHeading !== undefined ? options.allowHeading : DefaultOptions.allowHeading;
+    const allowLists = options.allowLists !== undefined ? options.allowLists : DefaultOptions.allowLists;
+    const allowFigures = options.allowFigures !== undefined ? options.allowFigures : DefaultOptions.allowFigures;
+    const allowWords = Array.isArray(options.allowWords) ? options.allowWords : DefaultOptions.allowWords;
     const helper = new RuleHelper(context);
     return {
         [Syntax.Header](node) {
             // options
-            if (!heading) {
+            if (!allowHeading) {
                 return;
             }
-            checkNode({ node, Syntax, getSource, report, RuleError, fixer, figures });
+            checkNode({ node, Syntax, getSource, report, RuleError, fixer, allowFigures, allowWords });
         },
         [Syntax.Paragraph](node) {
             if (helper.isChildNode(node, [Syntax.Link, Syntax.Image, Syntax.BlockQuote, Syntax.Emphasis])) {
@@ -122,13 +136,13 @@ const report = (context, options = {}) => {
             if (helper.isChildNode(node, [Syntax.ListItem])) {
                 return;
             }
-            checkNode({ node, Syntax, getSource, report, RuleError, fixer, figures });
+            checkNode({ node, Syntax, getSource, report, RuleError, fixer, allowFigures, allowWords });
         },
         [Syntax.ListItem](node) {
-            if (!lists) {
+            if (!allowLists) {
                 return;
             }
-            checkNode({ node, Syntax, getSource, report, RuleError, fixer, figures });
+            checkNode({ node, Syntax, getSource, report, RuleError, fixer, allowFigures, allowWords });
         }
     };
 };
