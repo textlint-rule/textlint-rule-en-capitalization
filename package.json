@@ -54,7 +54,6 @@
   "dependencies": {
     "en-pos": "^1.0.16",
     "sentence-splitter": "^3.0.0",
-    "textlint-rule-helper": "^2.0.0",
-    "textlint-util-to-string": "^2.1.1"
+    "textlint-rule-helper": "^2.0.0"
   }
 }
