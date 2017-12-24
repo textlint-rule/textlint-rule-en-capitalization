@@ -1,10 +1,14 @@
 // MIT © 2017 azu
 "use strict";
 const { RuleHelper } = require("textlint-rule-helper");
-const StringSource = require("textlint-util-to-string");
-const { split, Syntax: SentenceSyntax } = require("sentence-splitter");
+const { splitAST, Syntax: SentenceSyntax } = require("sentence-splitter");
 import { getPosFromSingleWord, isCapitalized, upperFirstCharacter } from "./captalize";
 
+const REPORT_TYPE = {
+    Heading: "Heading",
+    Paragraph: "Paragraph",
+    List: "List"
+};
 const shouldNotCapitalized = (string, allowWords) => {
     // allow words
     const shouldAllowed = allowWords.some(allowWord => {
@@ -26,24 +30,6 @@ const shouldNotCapitalized = (string, allowWords) => {
 };
 
 /**
- * get node at index
- * @param node
- * @param index
- * @returns {undefined|*}
- */
-const getNodeAtIndex = (node, index) => {
-    if (!node || !node.children) {
-        return undefined;
-    }
-    for (let i = 0; i < node.children.length; i++) {
-        const childNode = node.children[i];
-        if (childNode.range[0] <= index && index <= childNode.range[1]) {
-            return childNode;
-        }
-    }
-    return undefined;
-};
-/**
  * @param node
  * @param Syntax
  * @param {function} getSource
@@ -52,35 +38,28 @@ const getNodeAtIndex = (node, index) => {
  * @param fixer
  * @param {boolean} allowFigures enable figures check
  * @param {string[]} allowWords allow lower-case words
+ * @param {string} reportType REPORT_TYPE
  */
-const checkNode = ({ node, Syntax, getSource, report, RuleError, fixer, allowFigures, allowWords }) => {
-    const source = new StringSource(node);
-    const sourceText = source.toString();
-    const sentences = split(sourceText);
-    sentences.filter(sentence => sentence.type === SentenceSyntax.Sentence).forEach(sentence => {
-        const originalIndex = source.originalIndexFromIndex(sentence.range[0]);
-        let targetNode;
-        if (node.type === Syntax.ListItem) {
-            targetNode = getNodeAtIndex(node.children[0], node.range[0] + originalIndex);
-        } else {
-            targetNode = getNodeAtIndex(node, originalIndex);
-        }
-        if (!targetNode) {
+const checkNode = ({ node, Syntax, getSource, report, RuleError, fixer, allowFigures, allowWords, reportType }) => {
+    const DocumentURL = "https://owl.english.purdue.edu/owl/resource/592/01/";
+    const paragraphNode = splitAST(node);
+    paragraphNode.children.filter(sentence => sentence.type === SentenceSyntax.Sentence).forEach(sentence => {
+        const sentenceFirstNode = sentence.children[0];
+        if (!sentenceFirstNode) {
             return;
         }
-        const DocumentURL = "https://owl.english.purdue.edu/owl/resource/592/01/";
-        // check
-        if (targetNode.type === Syntax.Str) {
-            const text = sentence.value;
-            const firstWord = text.split(" ")[0];
+        // check first word is String
+        if (sentenceFirstNode.type === Syntax.Str) {
+            const text = sentenceFirstNode.value;
+            const firstWord = text.split(/\s/)[0];
             if (isCapitalized(firstWord) || shouldNotCapitalized(firstWord, allowWords)) {
                 return;
             }
-            const index = originalIndex;
+            const index = 0;
             return report(
-                node,
+                sentenceFirstNode,
                 new RuleError(
-                    `Heading: Follow the standard capitalization rules for American English.
+                    `${reportType}: Follow the standard capitalization rules for American English.
 See ${DocumentURL}`,
                     {
                         index: index,
@@ -88,13 +67,17 @@ See ${DocumentURL}`,
                     }
                 )
             );
-        } else if (allowFigures && targetNode.type === Syntax.Image && typeof targetNode.alt === "string") {
-            const text = targetNode.alt;
+        } else if (
+            allowFigures &&
+            sentenceFirstNode.type === Syntax.Image &&
+            typeof sentenceFirstNode.alt === "string"
+        ) {
+            const text = sentenceFirstNode.alt;
             if (isCapitalized(text) || shouldNotCapitalized(text, allowWords)) {
                 return;
             }
             return report(
-                targetNode,
+                sentenceFirstNode,
                 new RuleError(
                     `Image alt: Follow the standard capitalization rules for American English
 See ${DocumentURL}`
@@ -127,7 +110,17 @@ const report = (context, options = {}) => {
             if (!allowHeading) {
                 return;
             }
-            checkNode({ node, Syntax, getSource, report, RuleError, fixer, allowFigures, allowWords });
+            checkNode({
+                node,
+                Syntax,
+                getSource,
+                report,
+                RuleError,
+                fixer,
+                allowFigures,
+                allowWords,
+                reportType: REPORT_TYPE.Heading
+            });
         },
         [Syntax.Paragraph](node) {
             if (helper.isChildNode(node, [Syntax.Link, Syntax.Image, Syntax.BlockQuote, Syntax.Emphasis])) {
@@ -136,13 +129,35 @@ const report = (context, options = {}) => {
             if (helper.isChildNode(node, [Syntax.ListItem])) {
                 return;
             }
-            checkNode({ node, Syntax, getSource, report, RuleError, fixer, allowFigures, allowWords });
+            checkNode({
+                node,
+                Syntax,
+                getSource,
+                report,
+                RuleError,
+                fixer,
+                allowFigures,
+                allowWords,
+                reportType: REPORT_TYPE.Paragraph
+            });
         },
         [Syntax.ListItem](node) {
             if (!allowLists) {
                 return;
             }
-            checkNode({ node, Syntax, getSource, report, RuleError, fixer, allowFigures, allowWords });
+            node.children.forEach(paragraph => {
+                checkNode({
+                    node: paragraph,
+                    Syntax,
+                    getSource,
+                    report,
+                    RuleError,
+                    fixer,
+                    allowFigures,
+                    allowWords,
+                    reportType: REPORT_TYPE.List
+                });
+            });
         }
     };
 };

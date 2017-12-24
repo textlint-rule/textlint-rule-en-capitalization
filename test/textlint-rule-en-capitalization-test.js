@@ -7,6 +7,8 @@ tester.run("capitalization", rule, {
     valid: [
         "In text, follow the standard capitalization rules for American English. Additionally:",
         "First, sentence should be capital. Second, sentence should be capital.",
+        "`Code`, this is ok.",
+        "This is **good**. But that it not good.",
         "# Capitalization in titles and headings",
         "## Capitalization and colons\n" +
             "Use a lowercase letter to begin the first word of the text immediately following a colon, unless the text is one of the following:",
@@ -28,7 +30,13 @@ tester.run("capitalization", rule, {
             options: {
                 allowWords: ["textlint"]
             }
-        }
+        },
+        // https://github.com/textlint-rule/textlint-rule-en-capitalization/issues/2
+        `# Anatomy of a Package
+
+A minimal npm package should contain metadata in a _package.json_ file and an associated source file (usually _index.js_). In practice, packages contain more than that and you will have at least a license file and the source in various formats.`,
+        // need space after .
+        "This is pass.it's style is bad..."
     ],
     invalid: [
         {
@@ -38,7 +46,7 @@ tester.run("capitalization", rule, {
                 {
                     index: 0,
                     message:
-                        "Heading: Follow the standard capitalization rules for American English.\n" +
+                        "Paragraph: Follow the standard capitalization rules for American English.\n" +
                         "See https://owl.english.purdue.edu/owl/resource/592/01/"
                 }
             ]
@@ -82,10 +90,20 @@ tester.run("capitalization", rule, {
             errors: [{}, {}, {}, {}, {}]
         },
         {
+            text: "This is **good**. but that it not good.",
+            errors: [
+                {
+                    index: 18
+                }
+            ]
+        },
+        {
             text: "![image](http://exmaple.com) is not capital.",
             errors: [
                 {
-                    index: 0
+                    index: 0,
+                    message: `Image alt: Follow the standard capitalization rules for American English
+See https://owl.english.purdue.edu/owl/resource/592/01/`
                 }
             ]
         }
