@@ -2631,9 +2631,9 @@ safe-buffer@^5.0.1, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "5.4.1"
   resolved "https://registry.yarnpkg.com/semver/-/semver-5.4.1.tgz#e059c09d8571f0540823733433505d3a2f00b18e"
 
-sentence-splitter@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/sentence-splitter/-/sentence-splitter-3.0.0.tgz#2c9066883d95d68f83f37472168e2777f24163b8"
+sentence-splitter@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/sentence-splitter/-/sentence-splitter-3.0.1.tgz#df0aa1cf30b7866edeef18d436a2350fa86902ad"
   dependencies:
     "@textlint/ast-node-types" "^3.0.0"
     concat-stream "^1.5.2"
