@@ -150,15 +150,15 @@ const report = (context, options = {}) => {
             if (!allowLists) {
                 return;
             }
-            node.children.forEach(paragraph => {
+            node.children.forEach(blockNode => {
                 // Ignore other block node
                 // CodeBlock is a part of block node
                 // https://github.com/textlint-rule/textlint-rule-en-capitalization/issues/4
-                if (paragraph.type !== Syntax.Paragraph) {
+                if (blockNode.type !== Syntax.Paragraph) {
                     return;
                 }
                 checkNode({
-                    node: paragraph,
+                    node: blockNode,
                     Syntax,
                     getSource,
                     report,
