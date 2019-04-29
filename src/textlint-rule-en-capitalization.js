@@ -43,48 +43,53 @@ const shouldNotCapitalized = (string, allowWords) => {
 const checkNode = ({ node, Syntax, getSource, report, RuleError, fixer, allowFigures, allowWords, reportType }) => {
     const DocumentURL = "https://owl.english.purdue.edu/owl/resource/592/01/";
     const paragraphNode = splitAST(node);
-    paragraphNode.children.filter(sentence => sentence.type === SentenceSyntax.Sentence).forEach(sentence => {
-        const sentenceFirstNode = sentence.children[0];
-        if (!sentenceFirstNode) {
-            return;
-        }
-        // check first word is String
-        if (sentenceFirstNode.type === Syntax.Str) {
-            const text = sentenceFirstNode.value;
-            const firstWord = text.split(/\s/)[0];
-            if (isCapitalized(firstWord) || shouldNotCapitalized(firstWord, allowWords)) {
+    paragraphNode.children
+        .filter(sentence => sentence.type === SentenceSyntax.Sentence)
+        .forEach(sentence => {
+            const sentenceFirstNode = sentence.children[0];
+            if (!sentenceFirstNode) {
                 return;
             }
-            const index = 0;
-            return report(
-                sentenceFirstNode,
-                new RuleError(
-                    `${reportType}: Follow the standard capitalization rules for American English.
+            // check first word is String
+            if (sentenceFirstNode.type === Syntax.Str) {
+                const text = sentenceFirstNode.value;
+                const firstWord = text.split(/\s/)[0];
+                if (isCapitalized(firstWord) || shouldNotCapitalized(firstWord, allowWords)) {
+                    return;
+                }
+                const index = 0;
+                return report(
+                    sentenceFirstNode,
+                    new RuleError(
+                        `${reportType}: Follow the standard capitalization rules for American English.
 See ${DocumentURL}`,
-                    {
-                        index: index,
-                        fix: fixer.replaceTextRange([index, index + firstWord.length], upperFirstCharacter(firstWord))
-                    }
-                )
-            );
-        } else if (
-            allowFigures &&
-            sentenceFirstNode.type === Syntax.Image &&
-            typeof sentenceFirstNode.alt === "string"
-        ) {
-            const text = sentenceFirstNode.alt;
-            if (isCapitalized(text) || shouldNotCapitalized(text, allowWords)) {
-                return;
-            }
-            return report(
-                sentenceFirstNode,
-                new RuleError(
-                    `Image alt: Follow the standard capitalization rules for American English
+                        {
+                            index: index,
+                            fix: fixer.replaceTextRange(
+                                [index, index + firstWord.length],
+                                upperFirstCharacter(firstWord)
+                            )
+                        }
+                    )
+                );
+            } else if (
+                allowFigures &&
+                sentenceFirstNode.type === Syntax.Image &&
+                typeof sentenceFirstNode.alt === "string"
+            ) {
+                const text = sentenceFirstNode.alt;
+                if (isCapitalized(text) || shouldNotCapitalized(text, allowWords)) {
+                    return;
+                }
+                return report(
+                    sentenceFirstNode,
+                    new RuleError(
+                        `Image alt: Follow the standard capitalization rules for American English
 See ${DocumentURL}`
-                )
-            );
-        }
-    });
+                    )
+                );
+            }
+        });
 };
 
 const DefaultOptions = {
@@ -146,6 +151,12 @@ const report = (context, options = {}) => {
                 return;
             }
             node.children.forEach(paragraph => {
+                // Ignore other block node
+                // CodeBlock is a part of block node
+                // https://github.com/textlint-rule/textlint-rule-en-capitalization/issues/4
+                if (paragraph.type !== Syntax.Paragraph) {
+                    return;
+                }
                 checkNode({
                     node: paragraph,
                     Syntax,

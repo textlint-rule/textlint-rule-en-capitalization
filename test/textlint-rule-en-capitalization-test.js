@@ -36,7 +36,17 @@ tester.run("capitalization", rule, {
 
 A minimal npm package should contain metadata in a _package.json_ file and an associated source file (usually _index.js_). In practice, packages contain more than that and you will have at least a license file and the source in various formats.`,
         // need space after .
-        "This is pass.it's style is bad..."
+        "This is pass.it's style is bad...",
+        // List > CodeBlock bug
+        // https://github.com/textlint-rule/textlint-rule-en-capitalization/issues/4
+        "1. First text.\n" +
+            "\n" +
+            "    ```bash\n" +
+            "    ssh -i <key>\n" +
+            "        -L <path>\n" +
+            "        location@ip\n" +
+            "    ```\n" +
+            "\n"
     ],
     invalid: [
         {
