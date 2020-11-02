@@ -1,4 +1,4 @@
-# textlint-rule-en-capitalization [![Build Status](https://travis-ci.org/textlint-rule/textlint-rule-en-capitalization.svg?branch=master)](https://travis-ci.org/textlint-rule/textlint-rule-en-capitalization)
+# textlint-rule-en-capitalization [![Actions Status: test](https://github.com/textlint-rule/textlint-rule-en-capitalization/workflows/test/badge.svg)](https://github.com/textlint-rule/textlint-rule-en-capitalization/actions?query=workflow%3A"test")
 
 
 textlint rule that check capitalization in english text.
