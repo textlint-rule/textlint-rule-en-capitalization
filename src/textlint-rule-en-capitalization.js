@@ -17,6 +17,10 @@ const shouldNotCapitalized = (string, allowWords) => {
     if (shouldAllowed) {
         return true;
     }
+    // Can not capitalize word
+    if (!/^[a-zA-Z]/.test(string)) {
+        return true;
+    }
     // A quotation
     if (!/^\w/.test(string)) {
         return true;
