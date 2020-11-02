@@ -5,6 +5,9 @@ const rule = require("../src/textlint-rule-en-capitalization");
 const tester = new TextLintTester();
 tester.run("capitalization", rule, {
     valid: [
+        // Ignore non [a-zA-Z] started word,
+        // number-started text https://github.com/textlint-rule/textlint-rule-en-capitalization/issues/7
+        "1st line.",
         "In text, follow the standard capitalization rules for American English. Additionally:",
         "First, sentence should be capital. Second, sentence should be capital.",
         "`Code`, this is ok.",
