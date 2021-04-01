@@ -25,14 +25,14 @@ tester.run("capitalization", rule, {
         {
             text: "![image](http://exmaple.com) is not capital.",
             options: {
-                allowFigures: false
-            }
+                allowFigures: false,
+            },
         },
         {
             text: "textlint is allowed.",
             options: {
-                allowWords: ["textlint"]
-            }
+                allowWords: ["textlint"],
+            },
         },
         // https://github.com/textlint-rule/textlint-rule-en-capitalization/issues/2
         `# Anatomy of a Package
@@ -49,7 +49,9 @@ A minimal npm package should contain metadata in a _package.json_ file and an as
             "        -L <path>\n" +
             "        location@ip\n" +
             "    ```\n" +
-            "\n"
+            "\n",
+        // https://github.com/textlint-rule/textlint-rule-en-capitalization/issues/10
+        "This is a sentence: <https://google.com//search?q=something>",
     ],
     invalid: [
         {
@@ -60,30 +62,30 @@ A minimal npm package should contain metadata in a _package.json_ file and an as
                     index: 0,
                     message:
                         "Paragraph: Follow the standard capitalization rules for American English.\n" +
-                        "See https://owl.english.purdue.edu/owl/resource/592/01/"
-                }
-            ]
+                        "See https://owl.english.purdue.edu/owl/resource/592/01/",
+                },
+            ],
         },
         {
             text: "first, sentence should be capital. second, sentence should be capital.",
             output: "First, sentence should be capital. Second, sentence should be capital.",
             errors: [
                 {
-                    index: 0
+                    index: 0,
                 },
                 {
-                    index: 35
-                }
-            ]
+                    index: 35,
+                },
+            ],
         },
         {
             text: "# capitalization in titles and headings",
             output: "# Capitalization in titles and headings",
             errors: [
                 {
-                    index: 2
-                }
-            ]
+                    index: 2,
+                },
+            ],
         },
         {
             text: `
@@ -100,15 +102,15 @@ A minimal npm package should contain metadata in a _package.json_ file and an as
 - Text that follows a label, such as a Caution or Note.
 - A subheading on the same line as a heading.
 `,
-            errors: [{}, {}, {}, {}, {}]
+            errors: [{}, {}, {}, {}, {}],
         },
         {
             text: "This is **good**. but that it not good.",
             errors: [
                 {
-                    index: 18
-                }
-            ]
+                    index: 18,
+                },
+            ],
         },
         {
             text: "![image](http://exmaple.com) is not capital.",
@@ -116,9 +118,9 @@ A minimal npm package should contain metadata in a _package.json_ file and an as
                 {
                     index: 0,
                     message: `Image alt: Follow the standard capitalization rules for American English
-See https://owl.english.purdue.edu/owl/resource/592/01/`
-                }
-            ]
-        }
-    ]
+See https://owl.english.purdue.edu/owl/resource/592/01/`,
+                },
+            ],
+        },
+    ],
 });
